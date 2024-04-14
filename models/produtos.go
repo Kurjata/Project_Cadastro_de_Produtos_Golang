@@ -1,45 +1,46 @@
 package models
 
-import "github.com/kurjata/Project_Cadastro_de_Produtos_Golang"
+import(
+	"github.com/kurjata/Project_Cadastro_de_Produtos_Golang/db"
+)
 
 type Produto struct {
-	Id         int
-	Nome       string
-	Descricao  string
-	Preco      float64
-	Quantidade int
+    Id         int
+    Nome       string
+    Descricao  string
+    Preco      float64
+    Quantidade int
 }
 
+func BuscaTodosProdutos() []Produto {
+    db := db.ConectDataBase() 
+    selectTodosProdutos, err := db.Query("SELECT * FROM produtos")
+    if err != nil {
+        panic(err.Error())
+    }
 
-func BuscaTodosProdutos (){
-	db := db.ConectDataBase()
-	selectTodosProdutos, err := db.Query("SELECT * FROM produtos")
-	if err != nil {
-		panic(err.Error())
-	}
+    p := Produto{}
+    produtos := []Produto{}
 
-	p := Produto{}
-	produtos := []Produto{}
+    for selectTodosProdutos.Next() {
+        var id, quantidade int
+        var nome, descricao string
+        var preco float64
 
-	for selectTodosProdutos.Next() {
+        err = selectTodosProdutos.Scan(&id, &nome, &descricao, &preco, &quantidade)
+        if err != nil {
+            panic(err.Error())
+        }
 
-		var id, quantidade int
-		var nome, descricao string
-		var preco float64
+        p.Id = id
+        p.Nome = nome
+        p.Descricao = descricao
+        p.Preco = preco
+        p.Quantidade = quantidade
 
-		err = selectTodosProdutos.Scan(&id, &nome, &descricao, &preco, &quantidade)
-		if err != nil {
-			panic(err.Error())
-		}
+        produtos = append(produtos, p)
+    }
 
-		p.Nome = nome
-		p.Descricao = descricao
-		p.Preco = preco
-		p.Quantidade = quantidade
-
-		produtos = append(produtos, p)
-	}
-	
-	defer db.Close()
-	return produtos
+    defer db.Close()
+    return produtos
 }

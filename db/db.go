@@ -3,8 +3,7 @@ package db
 import (
 	"database/sql"
 	"os"
-
-
+	"fmt"
 	_ "github.com/lib/pq"
 )
 
