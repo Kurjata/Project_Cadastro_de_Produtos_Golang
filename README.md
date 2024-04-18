@@ -60,5 +60,3 @@ go mod tidy
 ```bash
 go mod tidy
 ```
-
-Contr
